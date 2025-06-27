@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useDebounce, useSetState } from "react-use";
+import { useDebounce } from "react-use";
 import Search from "./components/Search";
 import axios from "axios";
 import EaziFlixSpinner from "./components/EaziFlixSpinner";

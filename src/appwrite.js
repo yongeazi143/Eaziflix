@@ -72,5 +72,3 @@ export const getTrendingMovies = async () => {
     
   }
 }
-
-const trendingMovies = await getTrendingMovies();
