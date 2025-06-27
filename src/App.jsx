@@ -5,6 +5,7 @@ import axios from "axios";
 import EaziFlixSpinner from "./components/EaziFlixSpinner";
 import MovieCard from "./components/MovieCard";
 import { getTrendingMovies, updateSearchCount } from "./appwrite";
+import MovieSkeleton from "./components/MovieSkeleton";
 
 const TMDB_API_URL = "https://api.themoviedb.org/3/";
 const TMDB_API_KEY = import.meta.env.VITE_TMDB_API_KEY;
@@ -60,6 +61,7 @@ const App = () => {
             ? `No results found for "${searchTerm}"`
             : "No popular movies currently available"
         );
+
         setMovies([]);
         setLoading(false); // Set loading to false if no results
         return;
@@ -74,7 +76,9 @@ const App = () => {
       console.error(error);
       setErrorMessage("Failed to fetch movies. Please try again later.");
     } finally {
-      setLoading(false); // Set loading to false after the request completes
+      setTimeout(() => {
+        setLoading(false); // Set loading to false after the request completes
+      }, 3000);
     }
   };
 
@@ -91,7 +95,9 @@ const App = () => {
       }
     } catch (error) {
       console.error(error);
-      setTrendingError("Failed to fetch trending movies. Please try again later.");
+      setTrendingError(
+        "Failed to fetch trending movies. Please try again later."
+      );
     } finally {
       setTrendingLoading(false); // Set trending loading to false after the request completes
     }
@@ -150,7 +156,7 @@ const App = () => {
           <h2>Trending Movies</h2>
           {trendingLoading ? (
             <EaziFlixSpinner variant="pulse" size="lg" color="green" />
-          ) : trendingError ? ( 
+          ) : trendingError ? (
             <p className="text-red-500">{trendingError}</p>
           ) : (
             <ul>
@@ -167,7 +173,12 @@ const App = () => {
         <section className="all-movies">
           <h2>All Movies</h2>
           {loading ? (
-            <EaziFlixSpinner variant="pulse" size="lg" color="green" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {/* Generate 8 skeleton cards to match your layout */}
+              {Array.from({ length: 8 }).map((_, index) => (
+                <MovieSkeleton key={index} />
+              ))}
+            </div>
           ) : errorMessage ? (
             <p className="text-red-500">{errorMessage}</p>
           ) : (
