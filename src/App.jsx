@@ -6,6 +6,8 @@ import EaziFlixSpinner from "./components/EaziFlixSpinner";
 import MovieCard from "./components/MovieCard";
 import { getTrendingMovies, updateSearchCount } from "./appwrite";
 import MovieSkeleton from "./components/MovieSkeleton";
+import TreandingMoviesSkeleton from "./components/TrendingMoviesSkeleton";
+import { Link } from "react-router-dom";
 
 const TMDB_API_URL = "https://api.themoviedb.org/3/";
 const TMDB_API_KEY = import.meta.env.VITE_TMDB_API_KEY;
@@ -91,15 +93,19 @@ const App = () => {
       if (movies.length > 0) {
         setTrendingMovies(movies);
         setTrendingError("");
-        setTrendingLoading(false); // Set trending loading to false if movies are found
+        setTimeout(() => {
+        setTrendingLoading(false);
+      }, 3000); 
       }
     } catch (error) {
       console.error(error);
       setTrendingError(
         "Failed to fetch trending movies. Please try again later."
       );
-    } finally {
-      setTrendingLoading(false); // Set trending loading to false after the request completes
+
+      setTimeout(() => {
+      setTrendingLoading(false);
+    }, 3000);
     }
   };
 
@@ -141,9 +147,14 @@ const App = () => {
   return (
     <main>
       <div className="pattern" />
-
+      <div className="navbar absolute top-0 left-0 right-0 w-[90%] mx-auto z-50">
+        <nav className="flex items-center justify-between mt-8">
+          <h2>Eazi<span className="text-gradient">Flix</span></h2>
+          <Link to="/login" className="bg-gradient-to-r from-[#D6C7FF] to-[#AB8BFF] text-white font-normal px-4 py-2 rounded-[5px]  hover:cursor-pointer hover:shadow-2xl hover:from-[#AB8BFF] hover:to-[#8B5FFF] transform hover:scale-105 transition-all duration-300">Sign In</Link>
+        </nav>
+      </div>
       <div className="wrapper">
-        <header>
+        <header className="mb-12">
           <img src="./hero.png" alt="Hero Banner" />
           <h1>
             Find <span className="text-gradient">Movies</span> You'll Love
@@ -155,7 +166,14 @@ const App = () => {
         <section className="trending">
           <h2>Trending Movies</h2>
           {trendingLoading ? (
-            <EaziFlixSpinner variant="pulse" size="lg" color="green" />
+            <ul>
+              {Array.from({ length: 5 }).map((_, index) => (
+                <li key={index}>
+                  <p>{index + 1}</p>
+                  <TreandingMoviesSkeleton />
+                </li>
+              ))}
+            </ul>
           ) : trendingError ? (
             <p className="text-red-500">{trendingError}</p>
           ) : (

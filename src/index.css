@@ -146,6 +146,10 @@
   @apply bg-linear-to-r from-[#D6C7FF] to-[#AB8BFF] bg-clip-text text-transparent;
 }
 
+@utility bg-gradient {
+  @apply bg-blue-900 bg-linear-to-r from-[#D6C7FF] to-[#AB8BFF] bg-clip-text;
+}
+
 @utility fancy-text {
   -webkit-text-stroke: 5px rgba(206, 206, 251, 0.5);
   font-size: 190px;

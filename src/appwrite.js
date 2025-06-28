@@ -1,7 +1,7 @@
 const DATABASE_ID = import.meta.env.VITE_APPWRITE_DATABASE_ID;
 const COLLECTION_ID = import.meta.env.VITE_APPWRITE_COLLECTION_ID;
 const PROJECT_ID = import.meta.env.VITE_APPWRITE_PROJECT_ID;
-import { Client, Databases, Query, ID } from "appwrite";
+import { Client, Databases, Query, ID, Account } from "appwrite";
 
 const appWriteEndPoint = "https://fra.cloud.appwrite.io/v1";
 
@@ -72,3 +72,8 @@ export const getTrendingMovies = async () => {
     
   }
 }
+
+
+// Account management
+export const account = new Account(client);
+export { ID } from 'appwrite';
