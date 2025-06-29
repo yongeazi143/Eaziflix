@@ -4,7 +4,7 @@ import { Eye, EyeOff} from "lucide-react";
 import GoogleIcon from "./GoogleIcon";
 import Navbar from "./Navbar";
 import CancelIcon from "./CancelIcon";
-import GitHubIcon from "./GithubIcon";
+import GitHubIcon from "./GithubIcon.jsx";
 
 // Main App component
 const LoginPage = () => {

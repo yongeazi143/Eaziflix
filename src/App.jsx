@@ -149,7 +149,7 @@ const App = () => {
       <div className="pattern" />
       <Navbar />
       <div className="wrapper">
-        <header className="mb-12">
+        <header className="">
           <img src="./hero.png" alt="Hero Banner" />
           <h1>
             Find <span className="text-gradient">Movies</span> You'll Love
@@ -158,7 +158,7 @@ const App = () => {
           <Search searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
         </header>
 
-        <section className="trending">
+        <section className="trending mb-5">
           <h2>Trending Movies</h2>
           {trendingLoading ? (
             <ul>
