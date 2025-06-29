@@ -7,7 +7,7 @@ import MovieCard from "./components/MovieCard";
 import { getTrendingMovies, updateSearchCount } from "./appwrite";
 import MovieSkeleton from "./components/MovieSkeleton";
 import TreandingMoviesSkeleton from "./components/TrendingMoviesSkeleton";
-import { Link } from "react-router-dom";
+import Navbar from "./components/Navbar";
 
 const TMDB_API_URL = "https://api.themoviedb.org/3/";
 const TMDB_API_KEY = import.meta.env.VITE_TMDB_API_KEY;
@@ -147,12 +147,7 @@ const App = () => {
   return (
     <main>
       <div className="pattern" />
-      <div className="navbar absolute top-0 left-0 right-0 w-[90%] mx-auto z-50">
-        <nav className="flex items-center justify-between mt-8">
-          <h2>Eazi<span className="text-gradient">Flix</span></h2>
-          <Link to="/login" className="bg-gradient-to-r from-[#D6C7FF] to-[#AB8BFF] text-white font-normal px-4 py-2 rounded-[5px]  hover:cursor-pointer hover:shadow-2xl hover:from-[#AB8BFF] hover:to-[#8B5FFF] transform hover:scale-105 transition-all duration-300">Sign In</Link>
-        </nav>
-      </div>
+      <Navbar />
       <div className="wrapper">
         <header className="mb-12">
           <img src="./hero.png" alt="Hero Banner" />
