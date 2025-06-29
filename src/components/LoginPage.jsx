@@ -1,4 +1,6 @@
 import { useState } from "react";
+
+import { Eye, EyeOff} from "lucide-react";
 import GoogleIcon from "./GoogleIcon";
 import Navbar from "./Navbar";
 import CancelIcon from "./CancelIcon";
@@ -17,6 +19,9 @@ const LoginPage = () => {
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
 
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
   // Email validation function
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -28,30 +33,31 @@ const LoginPage = () => {
     return password.length >= 6;
   };
 
+  // Helper to validate email field
+  const validateEmailField = (email) => {
+    if (!email.trim()) return "Email address is required";
+    if (!validateEmail(email)) return "Please enter a valid email address";
+    return "";
+  };
+
+  // Helper to validate password field
+  const validatePasswordField = (password) => {
+    if (!password.trim()) return "Password is required";
+    if (!validatePassword(password))
+      return "Your password must contain between 6 or more characters.";
+    return "";
+  };
+
   // Handle email blur
   const handleEmailBlur = () => {
     setEmailFocused(false);
-    if (!email.trim()) {
-      setEmailError("Email address is required");
-    } else if (!validateEmail(email)) {
-      setEmailError("Please enter a valid email address");
-    } else {
-      setEmailError("");
-    }
+    setEmailError(validateEmailField(email));
   };
 
   // Handle password blur
   const handlePasswordBlur = () => {
     setPasswordFocused(false);
-    if (!password.trim()) {
-      setPasswordError("Password is required");
-    } else if (!validatePassword(password)) {
-      setPasswordError(
-        "Your password must contain between 6 or more characters."
-      );
-    } else {
-      setPasswordError("");
-    }
+    setPasswordError(validatePasswordField(password));
   };
 
   // Handle email focus
@@ -67,17 +73,31 @@ const LoginPage = () => {
   };
 
   // Handle login authentication
-  const handleLoginAuthentication = () => {
-    if (!emailError || !passwordError) {
-      handleEmailBlur(); 
-      handlePasswordBlur(); 
-      
-      console.log("Email:", email);
-      console.log("Password:", password);
-      return;
-    }
-  }
+  const handleFormValidation = () => {
+    const emailErr = validateEmailField(email);
+    const passwordErr = validatePasswordField(password);
 
+    setEmailError(emailErr);
+    setPasswordError(passwordErr);
+
+    return !emailErr && !passwordErr;
+  };
+
+  const handleFormAuthentication = async (e) => {
+    e.preventDefault();
+    if (handleFormValidation()) {
+      setLoading(true);
+      try {
+        // Call authentication API
+        console.log("Form submitted with:", { email, password, rememberMe });
+        // Redirect on success
+      } catch (error) {
+        // Handle API errors
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
 
   return (
     <main
@@ -101,7 +121,10 @@ const LoginPage = () => {
           <h2>Sign In</h2>
 
           {/* Form */}
-          <form onSubmit={(e) => e.preventDefault()} className="space-y-4 mt-4">
+          <form
+            onSubmit={(e) => handleFormAuthentication(e)}
+            className="space-y-4 mt-4"
+          >
             {/* Email Input */}
             <div className="relative">
               <input
@@ -115,7 +138,7 @@ const LoginPage = () => {
                   emailError ? "border-red-500" : "border-white"
                 }`}
               />
-              
+
               <label
                 className={`font-normal absolute left-4 pointer-events-none transition-all duration-200 ${
                   emailFocused || email
@@ -135,7 +158,7 @@ const LoginPage = () => {
             {/* Password Input */}
             <div className="relative">
               <input
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -154,6 +177,14 @@ const LoginPage = () => {
               >
                 Password
               </label>
+
+  <button
+    type="button"
+    onClick={() => setShowPassword(!showPassword)}
+    className="absolute right-3 top-5 text-gray-400 hover:text-white hover:cursor-pointer"
+  >
+    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+  </button>
               {passwordError && (
                 <p className="text-red-500 mt-2 flex items-center justify-start gap-1">
                   <CancelIcon /> {passwordError}
@@ -165,7 +196,6 @@ const LoginPage = () => {
             <button
               type="submit"
               className="w-full rounded bg-gradient-to-r from-[#D6C7FF] to-[#AB8BFF] py-3 font-bold  text-white px-4 hover:cursor-pointer hover:shadow-2xl hover:from-[#AB8BFF] hover:to-[#8B5FFF] transition-all duration-300"
-              onClick={() => handleLoginAuthentication()}
             >
               Sign In
             </button>
@@ -176,16 +206,16 @@ const LoginPage = () => {
             <div className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2">
               <button
                 type="button"
-                className="flex flex-1 items-center justify-center rounded bg-white/10 py-2.5 font-semibold text-white transition hover:bg-white/20"
+                className="flex flex-1 items-center cursor-pointer justify-center rounded bg-white/10 py-2.5 font-semibold text-white transition hover:bg-white/20"
               >
                 <GoogleIcon />
                 Google
               </button>
               <button
                 type="button"
-                className="flex flex-1 items-center justify-center rounded bg-white/10 py-2.5 font-semibold text-white transition hover:bg-white/20"
+                className="flex flex-1 items-center justify-center cursor-pointer rounded bg-white/10 py-2.5 font-semibold text-white transition hover:bg-white/20"
               >
-                <GitHubIcon/>
+                <GitHubIcon />
                 GitHub
               </button>
             </div>
