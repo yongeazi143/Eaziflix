@@ -1,8 +1,8 @@
 import { useState } from "react";
 import GoogleIcon from "./GoogleIcon";
-import GitHubIcon from "./GithubIcon";
 import Navbar from "./Navbar";
 import CancelIcon from "./CancelIcon";
+import GitHubIcon from "./GithubIcon";
 
 // Main App component
 const LoginPage = () => {
@@ -172,7 +172,7 @@ const LoginPage = () => {
                 type="button"
                 className="flex flex-1 items-center justify-center rounded bg-white/10 py-2.5 font-semibold text-white transition hover:bg-white/20"
               >
-                <GitHubIcon />
+                <GitHubIcon/>
                 GitHub
               </button>
             </div>
