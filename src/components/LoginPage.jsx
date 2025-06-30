@@ -4,7 +4,6 @@ import { Eye, EyeOff} from "lucide-react";
 import GoogleIcon from "./GoogleIcon";
 import Navbar from "./Navbar";
 import CancelIcon from "./CancelIcon";
-import GitHubIcon from "./GithubIcon.jsx";
 
 // Main App component
 const LoginPage = () => {
@@ -213,9 +212,9 @@ const LoginPage = () => {
               </button>
               <button
                 type="button"
-                className="flex flex-1 items-center justify-center cursor-pointer rounded bg-white/10 py-2.5 font-semibold text-white transition hover:bg-white/20"
+                className="flex flex-1 items-center gap-2 justify-center cursor-pointer rounded bg-white/10 py-2.5 font-semibold text-white transition hover:bg-white/20"
               >
-                <GitHubIcon />
+                <img src="./github-logo.svg" alt="github-logo" width={20} height={20} />
                 GitHub
               </button>
             </div>
