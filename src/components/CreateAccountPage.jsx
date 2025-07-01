@@ -38,9 +38,11 @@ const CreateAccountPage = () => {
   };
 
   // Password validation function
-  const validatePassword = (password) => {
-    return password.length >= 8;
-  };
+const validatePassword = (password) => {
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
+  return passwordRegex.test(password);
+};
+
 
   // Helper to validate email field
   const validateEmailField = (email) => {
@@ -53,7 +55,8 @@ const CreateAccountPage = () => {
   const validatePasswordField = (password) => {
     if (!password.trim()) return "Password is required";
     if (!validatePassword(password))
-      return "Your password must contain between 8 or more characters.";
+      return "Password must be 8+ chars, with upper, lower, number & symbol."
+
     return "";
   };
 
