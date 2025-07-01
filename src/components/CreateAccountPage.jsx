@@ -1,37 +1,35 @@
+// CreateAccountPage.jsx - Updated with verification flow
 import { useState } from "react";
-
 import { Eye, EyeOff, LoaderCircle, CircleX } from "lucide-react";
 import GoogleIcon from "./GoogleIcon";
 import Navbar from "./Navbar";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useUser } from "../contexts/UserContext";
-
 import useToast from "../hooks/useToast";
 
-// Main App component
-const LoginPage = () => {
+const CreateAccountPage = () => {
   // State for form inputs
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(false);
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   // State for focus and validation
   const [emailFocused, setEmailFocused] = useState(false);
   const [passwordFocused, setPasswordFocused] = useState(false);
+  const [confirmPasswordFocused, setConfirmPasswordFocused] = useState(false);
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [confirmPasswordError, setConfirmPasswordError] = useState("");
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [termsError, setTermsError] = useState("");
 
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [verificationError, setVerificationError] = useState(false);
-  const [resending, setResending] = useState(false);
-  const [resendSuccess, setResendSuccess] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  // Hooks
-
-  const { login, resendVerificationEmail } = useUser();
-  
-    const { toast } = useToast();
+  const { register } = useUser();
+  const { toast } = useToast();
+  const navigate = useNavigate();
 
   // Email validation function
   const validateEmail = (email) => {
@@ -71,69 +69,85 @@ const LoginPage = () => {
     setPasswordError(validatePasswordField(password));
   };
 
+  // Handle confirm password blur
+  const handleConfirmPasswordBlur = () => {
+    setConfirmPasswordFocused(false);
+    if (!confirmPassword.trim()) {
+      setConfirmPasswordError("Please confirm your password");
+    } else if (confirmPassword !== password) {
+      setConfirmPasswordError("Passwords do not match");
+    } else {
+      setConfirmPasswordError("");
+    }
+  };
+
   // Handle email focus
   const handleEmailFocus = () => {
     setEmailFocused(true);
-    setEmailError(""); // Clear error on focus
+    setEmailError("");
   };
 
   // Handle password focus
   const handlePasswordFocus = () => {
     setPasswordFocused(true);
-    setPasswordError(""); // Clear error on focus
+    setPasswordError("");
   };
 
-  // Handle login authentication
+  // Handle confirm password focus
+  const handleConfirmPasswordFocus = () => {
+    setConfirmPasswordFocused(true);
+    setConfirmPasswordError("");
+  };
+
+  // Handle form validation
   const handleFormValidation = () => {
     const emailErr = validateEmailField(email);
     const passwordErr = validatePasswordField(password);
+    let confirmErr = "";
+
+    if (!confirmPassword.trim()) {
+      confirmErr = "Please confirm your password";
+    } else if (confirmPassword !== password) {
+      confirmErr = "Passwords do not match";
+    }
+
+    if (!termsAccepted) {
+      setTermsError("You must accept the terms and conditions");
+    } else {
+      setTermsError("");
+    }
 
     setEmailError(emailErr);
     setPasswordError(passwordErr);
+    setConfirmPasswordError(confirmErr);
 
-    return !emailErr && !passwordErr;
+    return !emailErr && !passwordErr && !confirmErr && termsAccepted;
   };
 
-const handleFormAuthentication = async (e) => {
-  e.preventDefault();
-  if (handleFormValidation()) {
-    setLoading(true);
-    
-    try {
-      // Start timer and authentication simultaneously
-      await Promise.all([
-        login(email, password), // Your authentication call
-        new Promise(resolve => setTimeout(resolve, 2000)) // Minimum 1 second delay
-      ]);
-      toast.success("Login successful!"); // Show success message
-     
-      // Redirect on success will be handled by login function
-      
-    } catch (error) {
-      // Handle API errors
-      if (error.message.includes("verify your email")) {
-        setVerificationError(true);
-        toast.error(error.message || "Please check your mailbox to verify your email to continue.");
-      } else {
-        toast.error(error.message || "Login failed. Please try again.");
+  const handleFormAuthentication = async (e) => {
+    e.preventDefault();
+    if (handleFormValidation()) {
+      setLoading(true);
+      try {
+        // Start timer and authentication simultaneously
+        const [result] = await Promise.all([
+          register(email, password),
+          new Promise(resolve => setTimeout(resolve, 2000)) // Minimum 2 second delay
+        ]);
+
+        if (result.needsVerification) {
+          toast.success(result.message);
+          // Navigate to verification page
+          navigate("/verify-email", { replace: true });
+        } else {
+          toast.success("Account created successfully!");
+        }
+      } catch (error) {
+        // Handle API errors
+        toast.error(error.message || "Failed to create account. Please try again.");
+      } finally {
+        setLoading(false);
       }
-    } finally {
-      setLoading(false);
-    }
-  }
-  };
-
-  const handleResendVerification = async () => {
-    setResending(true);
-    try {
-      await resendVerificationEmail();
-      setResendSuccess(true);
-      toast.success("Verification email sent! Please check your inbox.");
-      setTimeout(() => setResendSuccess(false), 5000);
-    } catch (error) {
-      toast.error(error.message || "Failed to resend verification email.");
-    } finally {
-      setResending(false);
     }
   };
 
@@ -148,14 +162,14 @@ const handleFormAuthentication = async (e) => {
       <Navbar />
 
       {/* Login Form Container */}
-      <section className="relative z-10 flex items-center justify-center pt-20 pb-5 mx-4 md:mx-0">
+      <section className="relative z-10 flex items-center justify-center pt-20 pb-4 mx-4 md:mx-0">
         <div
           className="w-full max-w-md rounded-md p-6 sm:p-12  
                 backdrop-blur-lg
                 border border-white/30
                 shadow-lg ring-1 ring-inset ring-white/5 backdrop-brightness-75"
         >
-          <h2>Login In</h2>
+          <h2 className="text-2xl font-bold text-white">Create Account</h2>
 
           {/* Form */}
           <form
@@ -187,7 +201,7 @@ const handleFormAuthentication = async (e) => {
               </label>
               {emailError && (
                 <p className="text-red-500 text-xs mt-2 flex items-center justify-start gap-1">
-                  <CircleX size={15} /> {emailError}
+                <CircleX size={15} /> {emailError}
                 </p>
               )}
             </div>
@@ -224,28 +238,90 @@ const handleFormAuthentication = async (e) => {
               </button>
               {passwordError && (
                 <p className="text-red-500 text-xs mt-2 flex items-center justify-start gap-1">
-                  <CircleX size={15} /> {passwordError}
+                 <CircleX size={15} /> {passwordError}
                 </p>
               )}
             </div>
 
-            {/* Sign In Button */}
+            {/* Confirm Password Input */}
+            <div className="relative">
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                placeholder="Confirm Password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                onFocus={handleConfirmPasswordFocus}
+                onBlur={handleConfirmPasswordBlur}
+                className={`w-full rounded bg-transparent placeholder-transparent px-4 pt-6 pb-2 border text-white focus:outline-1 focus:outline-white transition-all duration-200 ${
+                  confirmPasswordError ? "border-red-500" : "border-white"
+                }`}
+              />
+              <label
+                className={`font-normal absolute left-4 pointer-events-none transition-all duration-200 ${
+                  confirmPasswordFocused || confirmPassword
+                    ? "text-xs top-1.5 text-gradient"
+                    : "text-base top-4 transform -translate-y-0 text-white "
+                }`}
+              >
+                Confirm Password
+              </label>
+
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute right-3 top-5 text-gray-400 hover:text-white hover:cursor-pointer"
+              >
+                {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+              {confirmPasswordError && (
+                <p className="text-red-500 text-xs mt-2 flex items-center justify-start gap-1">
+                  <CircleX size={15} /> {confirmPasswordError}
+                </p>
+              )}
+            </div>
+
+            {/* Terms Acceptance */}
+            <div className="mt-4 flex items-start">
+              <input
+                type="checkbox"
+                checked={termsAccepted}
+                onChange={(e) => setTermsAccepted(e.target.checked)}
+                className="mt-1 form-checkbox h-4 w-4 rounded border-gray-600 bg-gray-700 text-red-600 focus:ring-red-500"
+              />
+              <span className="ml-2 text-white text-sm">
+                I agree to the{" "}
+                <a href="#" className="text-[#AB8BFF] hover:underline">
+                  Terms of Service
+                </a>{" "}
+                and{" "}
+                <a href="#" className="text-[#AB8BFF] hover:underline">
+                  Privacy Policy
+                </a>
+              </span>
+            </div>
+            {termsError && (
+              <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                <CircleX size={15} /> {termsError}
+              </p>
+            )}
+
+            {/* Create Account Button */}
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded bg-gradient-to-r from-[#D6C7FF] to-[#AB8BFF] py-3 font-bold  text-white px-4 hover:cursor-pointer hover:shadow-2xl hover:from-[#AB8BFF] hover:to-[#8B5FFF] transition-all duration-300"
+              className="w-full rounded bg-gradient-to-r from-[#D6C7FF] to-[#AB8BFF] py-3 font-bold  text-white px-4 hover:cursor-pointer hover:shadow-2xl hover:from-[#AB8BFF] hover:to-[#8B5FFF] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <div className="flex items-center justify-center gap-2">
                   <LoaderCircle className="animate-spin" size={20} />
-                  <span>Signing In...</span>
+                  <span>Creating Account...</span>
                 </div>
               ) : (
-                "Sign In"
+                "Create Account"
               )}
             </button>
 
-            <div className="text-center text-gray-400 mt-4">OR</div>
+            <div className="text-center text-gray-400">OR</div>
 
             {/* Social Login Buttons */}
             <div className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2">
@@ -269,35 +345,13 @@ const handleFormAuthentication = async (e) => {
                 GitHub
               </button>
             </div>
-
-            {/* Forgot Password Link */}
-            <div className="text-center">
-              <a href="#" className="text-sm text-gray-400 hover:underline">
-                Forgot password?
-              </a>
-            </div>
           </form>
 
-          {/* Remember Me Checkbox */}
-          <label className="flex items-center mt-2">
-            <input
-              type="checkbox"
-              checked={rememberMe}
-              onChange={(e) => setRememberMe(e.target.checked)}
-              className="form-checkbox h-4 w-4 rounded border-gray-600 bg-gray-700 text-red-600 focus:ring-red-500"
-            />
-            <span className="ml-2 text-white">Remember me</span>
-          </label>
-
-          {/* Sign Up Section */}
-          <div className="text-gray-400 mt-4">
-            New to Eazi<span className="text-gradient">Flix?</span>
-            {"  "}
-            <Link
-              to="/createaccount"
-              className="font-bold text-white hover:underline"
-            >
-              Create Account
+          {/* Sign In Link */}
+          <div className="text-center mt-6">
+            <span className="text-gray-400">Already have an account? </span>
+            <Link to="/login" className="font-bold text-white hover:underline">
+              Login In
             </Link>
           </div>
         </div>
@@ -306,4 +360,4 @@ const handleFormAuthentication = async (e) => {
   );
 };
 
-export default LoginPage;
+export default CreateAccountPage;

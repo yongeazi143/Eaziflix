@@ -10,12 +10,12 @@ const Navbar = () => {
         <h2 className="cursor-pointer" onClick={() => navigate("/")}>
           Eazi<span className="text-gradient">Flix</span>
         </h2>
-        {location.pathname !== "/login" && (
+        {(location.pathname !== "/login" && location.pathname !== "/createaccount") && (
           <Link
             to="/login"
             className="bg-gradient-to-r from-[#D6C7FF] to-[#AB8BFF] text-white font-normal px-4 py-2 rounded-[5px]  hover:cursor-pointer hover:shadow-2xl hover:from-[#AB8BFF] hover:to-[#8B5FFF] transform hover:scale-105 transition-all duration-300"
           >
-            Sign In
+            Login In
           </Link>
         )}
       </nav>
@@ -24,5 +24,3 @@ const Navbar = () => {
 };
 
 export default Navbar;
-
-{/*w-full rounded bg-gradient-to-r from-[#D6C7FF] to-[#AB8BFF] text-white font-normal px-4 py-2 hover:cursor-pointer hover:shadow-2xl hover:from-[#AB8BFF] hover:to-[#8B5FFF] transform hover:scale-105 transition-all duration-300*/}

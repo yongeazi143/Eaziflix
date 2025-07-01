@@ -1,6 +1,6 @@
 const EaziFlixSpinner = () => {
   return (
-    <div className="flex items-center justify-center">
+    <div className="flex items-center justify-center min-h-screen">
       <div className="text-3xl font-bold text-white">
         <span className="inline-block animate-bounce" style={{ animationDelay: '0s' }}>E</span>
         <span className="inline-block animate-bounce" style={{ animationDelay: '0.1s' }}>a</span>
