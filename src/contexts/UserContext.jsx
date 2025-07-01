@@ -70,7 +70,6 @@ export const UserProvider = (props) => {
     try {
       // Step 1: Create the user account
       const newUser = await account.create(ID.unique(), email, password);
-      console.log('Account Created', newUser);
 
       // Step 2: Store email and password temporarily in memory (only for 1 minute)
       setPendingVerificationEmail({
@@ -83,7 +82,6 @@ export const UserProvider = (props) => {
       setTimeout(() => {
         setPendingVerificationEmail(prev => {
           if (prev && Date.now() - prev.timestamp >= 60000) {
-            console.log('Pending verification data expired and cleared');
             return null;
           }
           return prev;
@@ -92,14 +90,12 @@ export const UserProvider = (props) => {
 
       // Step 3: Create a session temporarily to send verification email
       const session = await account.createEmailPasswordSession(email, password);
-      console.log('Temporary session created:', session);
       
       // Step 4: Send verification email while authenticated
       await sendVerificationEmail();
       
       // Step 5: IMPORTANT - Delete the session so user isn't logged in
       await account.deleteSession("current");
-      console.log('Temporary session deleted - user must verify email first');
       
       return { 
         success: true, 
@@ -172,14 +168,12 @@ export const UserProvider = (props) => {
 
       // Create temporary session to send verification email
       const session = await account.createEmailPasswordSession(email, password);
-      console.log('Temporary session created for resend:', session);
 
       // Send verification email
       await sendVerificationEmail();
 
       // Delete the temporary session
       await account.deleteSession("current");
-      console.log('Temporary session deleted after resend');
 
       return { success: true, message: "Verification email sent successfully!" };
     } catch (error) {

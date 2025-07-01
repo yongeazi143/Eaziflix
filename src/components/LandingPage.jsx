@@ -137,7 +137,6 @@ const LandingPage = () => {
   // Load trending movies on initial load
   useEffect(() => {
     loadTrendingMovies();
-    console.log('LandingPage component mounted and trending movies loaded');
   }, []); // Only run once on mount
 
   return (

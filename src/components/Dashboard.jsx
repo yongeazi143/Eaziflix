@@ -143,7 +143,6 @@ const Dashboard = () => {
   // Load trending movies on initial load
   useEffect(() => {
     loadTrendingMovies();
-    console.log('Dashboard component mounted and trending movies loaded');
   }, []); // Only run once on mount
 
   const logoutFunction = () => {
