@@ -1,57 +1,42 @@
 import { useState } from "react";
-
+import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff, LoaderCircle, CircleX } from "lucide-react";
 import GoogleIcon from "./GoogleIcon";
 import Navbar from "./Navbar";
 import { Link } from "react-router-dom";
 import { useUser } from "../contexts/UserContext";
-
 import useToast from "../hooks/useToast";
 
-// Main App component
 const LoginPage = () => {
-  // State for form inputs
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
-
-  // State for focus and validation
   const [emailFocused, setEmailFocused] = useState(false);
   const [passwordFocused, setPasswordFocused] = useState(false);
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
-
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [verificationError, setVerificationError] = useState(false);
-  const [resending, setResending] = useState(false);
-  const [resendSuccess, setResendSuccess] = useState(false);
 
-  // Hooks
+  const navigate = useNavigate();
+  const { login } = useUser();
+  const { toast } = useToast();
 
-  const { login, resendVerificationEmail } = useUser();
-  
-    const { toast } = useToast();
-
-  // Email validation function
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
 
-  // Password validation function
   const validatePassword = (password) => {
     return password.length >= 8;
   };
 
-  // Helper to validate email field
   const validateEmailField = (email) => {
     if (!email.trim()) return "Email address is required";
     if (!validateEmail(email)) return "Please enter a valid email address";
     return "";
   };
 
-  // Helper to validate password field
   const validatePasswordField = (password) => {
     if (!password.trim()) return "Password is required";
     if (!validatePassword(password))
@@ -59,81 +44,53 @@ const LoginPage = () => {
     return "";
   };
 
-  // Handle email blur
   const handleEmailBlur = () => {
     setEmailFocused(false);
     setEmailError(validateEmailField(email));
   };
 
-  // Handle password blur
   const handlePasswordBlur = () => {
     setPasswordFocused(false);
     setPasswordError(validatePasswordField(password));
   };
 
-  // Handle email focus
   const handleEmailFocus = () => {
     setEmailFocused(true);
-    setEmailError(""); // Clear error on focus
+    setEmailError("");
   };
 
-  // Handle password focus
   const handlePasswordFocus = () => {
     setPasswordFocused(true);
-    setPasswordError(""); // Clear error on focus
+    setPasswordError("");
   };
 
-  // Handle login authentication
   const handleFormValidation = () => {
     const emailErr = validateEmailField(email);
     const passwordErr = validatePasswordField(password);
-
     setEmailError(emailErr);
     setPasswordError(passwordErr);
-
     return !emailErr && !passwordErr;
   };
 
-const handleFormAuthentication = async (e) => {
-  e.preventDefault();
-  if (handleFormValidation()) {
-    setLoading(true);
-    
-    try {
-      // Start timer and authentication simultaneously
-      await Promise.all([
-        login(email, password), // Your authentication call
-        new Promise(resolve => setTimeout(resolve, 2000)) // Minimum 1 second delay
-      ]);
-      toast.success("Login successful!"); // Show success message
-     
-      // Redirect on success will be handled by login function
-      
-    } catch (error) {
-      // Handle API errors
-      if (error.message.includes("verify your email")) {
-        setVerificationError(true);
-        toast.error(error.message || "Please check your mailbox to verify your email to continue.");
-      } else {
-        toast.error(error.message || "Login failed. Please try again.");
-      }
-    } finally {
-      setLoading(false);
-    }
-  }
-  };
+  const handleFormAuthentication = async (e) => {
+    e.preventDefault();
+    if (handleFormValidation()) {
+      setLoading(true);
 
-  const handleResendVerification = async () => {
-    setResending(true);
-    try {
-      await resendVerificationEmail();
-      setResendSuccess(true);
-      toast.success("Verification email sent! Please check your inbox.");
-      setTimeout(() => setResendSuccess(false), 5000);
-    } catch (error) {
-      toast.error(error.message || "Failed to resend verification email.");
-    } finally {
-      setResending(false);
+      try {
+        await login(email, password, rememberMe);
+        // Show toast immediately
+        toast.success("Login successful!");
+
+      } catch (error) {
+        if (error.message === "VERIFICATION_REQUIRED") {
+          navigate(`/verify-email?email=${encodeURIComponent(email)}`);
+        } else {
+          toast.error(error.message || "Login failed. Please try again.");
+        }
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -147,7 +104,6 @@ const handleFormAuthentication = async (e) => {
       <div className="absolute inset-0 bg-black/70 z-0"></div>
       <Navbar />
 
-      {/* Login Form Container */}
       <section className="relative z-10 flex items-center justify-center pt-20 pb-5 mx-4 md:mx-0">
         <div
           className="w-full max-w-md rounded-md p-6 sm:p-12  
@@ -157,12 +113,10 @@ const handleFormAuthentication = async (e) => {
         >
           <h2>Login In</h2>
 
-          {/* Form */}
           <form
             onSubmit={(e) => handleFormAuthentication(e)}
             className="space-y-4 mt-4"
           >
-            {/* Email Input */}
             <div className="relative">
               <input
                 type="email"
@@ -192,7 +146,6 @@ const handleFormAuthentication = async (e) => {
               )}
             </div>
 
-            {/* Password Input */}
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
@@ -223,13 +176,15 @@ const handleFormAuthentication = async (e) => {
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
               {passwordError && (
-                <p className="text-red-500 text-xs mt-2 flex items-center justify-start gap-1">
+                <p
+                  className="text-red-5
+00 text-xs mt-2 flex items-center justify-start gap-1"
+                >
                   <CircleX size={15} /> {passwordError}
                 </p>
               )}
             </div>
 
-            {/* Sign In Button */}
             <button
               type="submit"
               disabled={loading}
@@ -247,7 +202,6 @@ const handleFormAuthentication = async (e) => {
 
             <div className="text-center text-gray-400 mt-4">OR</div>
 
-            {/* Social Login Buttons */}
             <div className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2">
               <button
                 type="button"
@@ -270,7 +224,6 @@ const handleFormAuthentication = async (e) => {
               </button>
             </div>
 
-            {/* Forgot Password Link */}
             <div className="text-center">
               <a href="#" className="text-sm text-gray-400 hover:underline">
                 Forgot password?
@@ -278,7 +231,6 @@ const handleFormAuthentication = async (e) => {
             </div>
           </form>
 
-          {/* Remember Me Checkbox */}
           <label className="flex items-center mt-2">
             <input
               type="checkbox"
@@ -289,7 +241,6 @@ const handleFormAuthentication = async (e) => {
             <span className="ml-2 text-white">Remember me</span>
           </label>
 
-          {/* Sign Up Section */}
           <div className="text-gray-400 mt-4">
             New to Eazi<span className="text-gradient">Flix?</span>
             {"  "}

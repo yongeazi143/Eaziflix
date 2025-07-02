@@ -134,8 +134,7 @@ const validatePassword = (password) => {
       try {
         // Start timer and authentication simultaneously
         const [result] = await Promise.all([
-          register(email, password),
-          new Promise(resolve => setTimeout(resolve, 2000)) // Minimum 2 second delay
+         await  register(email, password)
         ]);
 
         if (result.needsVerification) {

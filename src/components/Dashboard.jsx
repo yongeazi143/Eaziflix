@@ -41,17 +41,52 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [movies, setMovies] = useState([]);
+  const [sessionTimeLeft, setSessionTimeLeft] = useState(null);
 
   const [trendingMovies, setTrendingMovies] = useState([]);
   const [trendingLoading, setTrendingLoading] = useState(false);
   const [trendingError, setTrendingError] = useState("");
+  const [loggedOut, setLoggedOut] = useState(false);
 
   // Simple flag to prevent duplicate trending calls
   const trendingLoadedRef = useRef(false);
 
   // Fetch context
-  const {logout} = useUser();
+  const { logout, getRemainingSessionTime } = useUser();
   const { toast } = useToast(); 
+
+  // Session timer effect
+  useEffect(() => {
+    const updateSessionTimer = () => {
+      const remaining = getRemainingSessionTime();
+      if (remaining) {
+        setSessionTimeLeft(remaining);
+      } else {
+        setSessionTimeLeft(null);
+      }
+    };
+
+    // Update immediately
+    updateSessionTimer();
+
+    // Update every 30 seconds
+    const interval = setInterval(updateSessionTimer, 30000);
+
+    return () => clearInterval(interval);
+  }, [getRemainingSessionTime]);
+
+  // Format time for display
+  const formatTimeRemaining = (milliseconds) => {
+    if (!milliseconds) return null;
+    
+    const minutes = Math.ceil(milliseconds / 1000 / 60);
+    if (minutes > 60) {
+      const hours = Math.floor(minutes / 60);
+      const remainingMinutes = minutes % 60;
+      return `${hours}h ${remainingMinutes}m`;
+    }
+    return `${minutes}m`;
+  };
 
   const fetchMovies = async (signal) => {
     setErrorMessage("");
@@ -84,7 +119,7 @@ const Dashboard = () => {
       console.error(error);
       setErrorMessage("Failed to fetch movies. Please try again later.");
     } finally {
-      setLoading(false); // Remove the artificial delay
+      setLoading(false);
     }
   };
 
@@ -107,7 +142,7 @@ const Dashboard = () => {
       setTrendingError("Failed to fetch trending movies. Please try again later.");
       trendingLoadedRef.current = false; // Reset flag on error
     } finally {
-      setTrendingLoading(false); // Remove the artificial delay
+      setTrendingLoading(false);
     }
   };
 
@@ -123,7 +158,7 @@ const Dashboard = () => {
 
       return () => controller.abort();
     },
-    500, // Reduced from 1000ms for better UX
+    500,
     [searchTerm]
   );
 
@@ -138,23 +173,51 @@ const Dashboard = () => {
     }
 
     return () => controller.abort();
-  }, []); // Only run once on mount
+  }, []);
 
   // Load trending movies on initial load
   useEffect(() => {
     loadTrendingMovies();
-  }, []); // Only run once on mount
+  }, []);
 
-  const logoutFunction = () => {
-    logout()
-    toast.success("You have been logged out successfully.");
+  const logoutFunction = async () => {
+    setLoggedOut(true);
+    try {
+      await logout();
+      toast.success("You have been logged out successfully.");
+    } catch (error) {
+      toast.error("Logout failed, but you've been signed out locally.");
+    }finally {
+      setLoggedOut(false);
+    }
   }
+
+  // Show session expiry warning when less than 5 minutes remain
+  const showSessionWarning = sessionTimeLeft && sessionTimeLeft < 5 * 60 * 1000;
 
   return (
     <main>
       <div className="pattern" />
       <Navbar />
-      <button className="fixed bg-amber-500 px-6 py-2 left-0 top-1/2 mx-auto hover:bg-amber-900 cursor-pointer z-50" onClick={() => logoutFunction()}>Logout</button>
+      
+      {/* Enhanced logout button with session info */}
+      <div className="fixed left-0 top-1/2 transform -translate-y-1/2 z-50 bg-white/90 backdrop-blur-sm rounded-r-lg shadow-lg p-3">
+        {sessionTimeLeft && (
+          <div className={`text-xs mb-2 ${showSessionWarning ? 'text-red-600 font-bold' : 'text-gray-600'}`}>
+            {showSessionWarning && "⚠️ "}
+            Session expires in: {formatTimeRemaining(sessionTimeLeft)}
+          </div>
+        )}
+        <button
+          disabled={loggedOut}
+          type="button" 
+          className={`bg-amber-500 px-4 py-2 text-white rounded hover:bg-amber-600 transition-colors text-sm font-medium ${loggedOut ? 'opacity-50 cursor-not-allowed' : 'cusror-pointer'}`}
+          onClick={logoutFunction}
+        >
+          Logout
+        </button>
+      </div>
+
       <div className="wrapper">
         <header className="">
           <img src="./hero.png" alt="Hero Banner" />

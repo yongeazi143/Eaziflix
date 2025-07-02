@@ -5,12 +5,12 @@ import LoginPage from "./components/LoginPage";
 import CreateAccountPage from "./components/CreateAccountPage";
 import Dashboard from "./components/Dashboard";
 import LandingPage from "./components/LandingPage";
-import EmailVerificationPage from "./components/EmailVerificationPage"; // Add this import
+import EmailVerificationPage from "./components/EmailVerificationPage";
 import EaziFlixSpinner from "./components/EaziFlixSpinner";
 import { ToastProvider } from "./contexts/ToastProvider";
 
 const AppRoutes = () => {
-  const { current, loading } = useUser();
+  const { current, loading} = useUser();
 
   // Show loading spinner while checking authentication
   if (loading) {
@@ -41,7 +41,6 @@ const AppRoutes = () => {
           )
         }
       />
-      {/* Add the email verification route */}
       <Route
         path="/verify-email"
         element={
@@ -54,7 +53,7 @@ const AppRoutes = () => {
       />
       <Route
         path="/dashboard"
-        element={current ? <Dashboard /> : <Navigate to="/" replace />}
+        element={current ? <Dashboard /> : <Navigate to="/login" replace />}
       />
     </Routes>
   );
