@@ -81,7 +81,6 @@ const LoginPage = () => {
         await login(email, password, rememberMe);
         // Show toast immediately
         toast.success("Login successful!");
-
       } catch (error) {
         if (error.message === "VERIFICATION_REQUIRED") {
           navigate(`/verify-email?email=${encodeURIComponent(email)}`);
@@ -177,8 +176,7 @@ const LoginPage = () => {
               </button>
               {passwordError && (
                 <p
-                  className="text-red-5
-00 text-xs mt-2 flex items-center justify-start gap-1"
+                  className="text-red-500 text-xs mt-2 flex items-center justify-start gap-1"
                 >
                   <CircleX size={15} /> {passwordError}
                 </p>
