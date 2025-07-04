@@ -1,17 +1,36 @@
-// App.jsx - Updated with email verification route
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { UserProvider, useUser } from "./contexts/UserContext";
-import LoginPage from "./components/LoginPage";
-import CreateAccountPage from "./components/CreateAccountPage";
-import Dashboard from "./components/Dashboard";
-import LandingPage from "./components/LandingPage";
-import EmailVerificationPage from "./components/EmailVerificationPage";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+} from "react-router-dom";
+
+// Pages
+import LoginPage from "./components/Pages/LoginPage";
+import CreateAccountPage from "./components/Pages/CreateAccountPage";
+import Dashboard from "./components/Pages/Dashboard";
+import LandingPage from "./components/Pages/LandingPage";
+import EmailVerificationPage from "./components/Pages/EmailVerificationPage";
+import ForgotPasswordPage from "./components/Pages/ForgotPasswordPage";
+
+// Eaziflix Page Loader
 import EaziFlixSpinner from "./components/EaziFlixSpinner";
+
+// User Context for User Authentication / Notification Contexr
+import { UserProvider, useUser } from "./contexts/UserContext";
 import { ToastProvider } from "./contexts/ToastProvider";
+import ResetPasswordPage from "./components/Pages/ResetPasswordPage";
+import OAuthSuccess from "./components/Pages/OAuthSuccess";
+import OAuthFailure from "./components/Pages/OAuthFailure";
 
 const AppRoutes = () => {
-  const { current, loading} = useUser();
+  const { current, loading } = useUser();
+  const location = useLocation();
 
+  if (location.pathname === "/oauth-success") {
+    return <OAuthSuccess />;
+  }
   // Show loading spinner while checking authentication
   if (loading) {
     return <EaziFlixSpinner />;
@@ -54,6 +73,32 @@ const AppRoutes = () => {
       <Route
         path="/dashboard"
         element={current ? <Dashboard /> : <Navigate to="/login" replace />}
+      />
+      <Route
+        path="/forget-password"
+        element={
+          !current ? (
+            <ForgotPasswordPage />
+          ) : (
+            <Navigate to="/dashboard" replace />
+          )
+        }
+      />
+      <Route
+        path="/reset-password"
+        element={
+          !current ? (
+            <ResetPasswordPage />
+          ) : (
+            <Navigate to="/dashboard" replace />
+          )
+        }
+      />
+      <Route
+        path="/oauth-failure"
+        element={
+          !current ? <OAuthFailure /> : <Navigate to="/dashboard" replace />
+        }
       />
     </Routes>
   );

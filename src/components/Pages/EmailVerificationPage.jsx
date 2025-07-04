@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { CheckCircle, XCircle, LoaderCircle, Mail, Eye, EyeOff } from "lucide-react";
-import { useUser } from "../contexts/UserContext";
-import useToast from "../hooks/useToast";
-import Navbar from "./Navbar";
+import { useUser } from "../../contexts/UserContext";
+import useToast from "../../hooks/useToast";
+import Navbar from "../Navbar";
 
 const EmailVerificationPage = () => {
   const [searchParams] = useSearchParams();

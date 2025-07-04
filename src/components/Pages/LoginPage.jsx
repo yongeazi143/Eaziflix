@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff, LoaderCircle, CircleX } from "lucide-react";
-import GoogleIcon from "./GoogleIcon";
-import Navbar from "./Navbar";
+import GoogleIcon from "../GoogleIcon";
+import Navbar from "../Navbar";
 import { Link } from "react-router-dom";
-import { useUser } from "../contexts/UserContext";
-import useToast from "../hooks/useToast";
+import { useUser } from "../../contexts/UserContext";
+import useToast from "../../hooks/useToast";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -19,7 +19,7 @@ const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   const navigate = useNavigate();
-  const { login } = useUser();
+const { login, loginWithGoogle, loginWithGitHub, socialLoginLoading } = useUser();
   const { toast } = useToast();
 
   const validateEmail = (email) => {
@@ -203,29 +203,41 @@ const LoginPage = () => {
             <div className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2">
               <button
                 type="button"
-                className="flex flex-1 items-center cursor-pointer justify-center rounded bg-white/10 py-2.5 font-semibold text-white transition hover:bg-white/20"
+                onClick={() => loginWithGoogle(rememberMe)}
+                disabled={socialLoginLoading}
+                className="flex flex-1 items-center justify-center rounded bg-white/10 py-2.5 font-semibold text-white transition hover:bg-white/20 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <GoogleIcon />
+                {socialLoginLoading ? (
+                  <LoaderCircle className="animate-spin mr-2" size={20} />
+                ) : (
+                  <GoogleIcon />
+                )}
                 Google
               </button>
               <button
                 type="button"
-                className="flex flex-1 items-center gap-2 justify-center cursor-pointer rounded bg-white/10 py-2.5 font-semibold text-white transition hover:bg-white/20"
+                onClick={() => loginWithGitHub(rememberMe)}
+                disabled={socialLoginLoading}
+                className="flex flex-1 items-center gap-2 justify-center rounded bg-white/10 py-2.5 font-semibold text-white transition hover:bg-white/20 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <img
-                  src="./github-logo.svg"
-                  alt="github-logo"
-                  width={20}
-                  height={20}
-                />
+                {socialLoginLoading ? (
+                  <LoaderCircle className="animate-spin" size={20} />
+                ) : (
+                  <img
+                    src="./github-logo.svg"
+                    alt="github-logo"
+                    width={20}
+                    height={20}
+                  />
+                )}
                 GitHub
               </button>
             </div>
 
             <div className="text-center">
-              <a href="#" className="text-sm text-gray-400 hover:underline">
+              <Link to="/forget-password" className="text-sm text-gray-400 hover:underline">
                 Forgot password?
-              </a>
+              </Link>
             </div>
           </form>
 

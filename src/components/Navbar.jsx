@@ -10,7 +10,7 @@ const Navbar = () => {
         <h2 className="cursor-pointer" onClick={() => navigate("/")}>
           Eazi<span className="text-gradient">Flix</span>
         </h2>
-        {(location.pathname !== "/login" && location.pathname !== "/createaccount") && (
+        {location.pathname === "/" && (
           <Link
             to="/login"
             className="bg-gradient-to-r from-[#D6C7FF] to-[#AB8BFF] text-white font-normal px-4 py-2 rounded-[5px]  hover:cursor-pointer hover:shadow-2xl hover:from-[#AB8BFF] hover:to-[#8B5FFF] transform hover:scale-105 transition-all duration-300"

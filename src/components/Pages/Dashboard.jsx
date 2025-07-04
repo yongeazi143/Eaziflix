@@ -1,14 +1,14 @@
 import { useState, useEffect, useRef } from "react";
 import { useDebounce } from "react-use";
 import axios from "axios";
-import Search from "./Search";
-import MovieCard from "./MovieCard";
-import MovieSkeleton from "./MovieSkeleton";
-import TreandingMoviesSkeleton from "./TrendingMoviesSkeleton";
-import Navbar from "./Navbar";
-import { getTrendingMovies, updateSearchCount } from "../appwrite";
-import { useUser } from "../contexts/UserContext";
-import useToast from "../hooks/useToast";
+import Search from "../Search";
+import MovieCard from "../MovieCard";
+import MovieSkeleton from "../MovieSkeleton";
+import TreandingMoviesSkeleton from "../TrendingMoviesSkeleton";
+import Navbar from "../Navbar";
+import { getTrendingMovies, updateSearchCount } from "../../appwrite";
+import { useUser } from "../../contexts/UserContext";
+import useToast from "../../hooks/useToast";
 
 const TMDB_API_URL = "https://api.themoviedb.org/3/";
 const TMDB_API_KEY = import.meta.env.VITE_TMDB_API_KEY;
@@ -116,7 +116,6 @@ const Dashboard = () => {
       }
     } catch (error) {
       if (error.name === 'AbortError') return; // Don't handle aborted requests
-      console.error(error);
       setErrorMessage("Failed to fetch movies. Please try again later.");
     } finally {
       setLoading(false);
