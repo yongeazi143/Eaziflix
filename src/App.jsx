@@ -23,6 +23,7 @@ import { ToastProvider } from "./contexts/ToastProvider";
 import ResetPasswordPage from "./components/Pages/ResetPasswordPage";
 import OAuthSuccess from "./components/Pages/OAuthSuccess";
 import OAuthFailure from "./components/Pages/OAuthFailure";
+import MovieDetailsPage from "./components/Pages/MovieDetailsPage";
 
 const AppRoutes = () => {
   const { current, loading } = useUser();
@@ -98,6 +99,12 @@ const AppRoutes = () => {
         path="/oauth-failure"
         element={
           !current ? <OAuthFailure /> : <Navigate to="/dashboard" replace />
+        }
+      />
+      <Route
+        path="/movie/:id/*"
+        element={
+          current ? <MovieDetailsPage /> : <Navigate to="/" replace />
         }
       />
     </Routes>

@@ -330,7 +330,6 @@ const loginWithGoogle = async (rememberMe = false) => {
     return 0;
   };
 
-  // ... (keep all your existing functions: register, sendVerificationEmail, verifyEmail, etc.)
   const register = async (email, password) => {
     try {
       const newUser = await account.create(ID.unique(), email, password);
