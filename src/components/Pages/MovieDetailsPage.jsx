@@ -13,6 +13,8 @@ import {
 import useToast from "../../hooks/useToast";
 import EaziFlixSpinner from "../EaziFlixSpinner";
 import MovieCard from "../MovieCard";
+import TrailerModal from "../TrailerModal"; 
+import WatchNowModal from "../WatchNowModal";
 
 const TMDB_API_URL = "https://api.themoviedb.org/3/";
 const TMDB_API_KEY = import.meta.env.VITE_TMDB_API_KEY;
@@ -22,7 +24,7 @@ const getMovieDetailsConfig = (movieId) => ({
   url: `${TMDB_API_URL}movie/${movieId}`,
   params: {
     language: "en-US",
-    append_to_response: "credits,similar,watch/providers",
+    append_to_response: "credits,similar,watch/providers,videos", // Added videos
   },
   headers: {
     accept: "application/json",
@@ -40,6 +42,13 @@ const MovieDetailsPage = () => {
   const [error, setError] = useState(null);
   const [castScrollPosition, setCastScrollPosition] = useState(0);
   const [similarScrollPosition, setSimilarScrollPosition] = useState(0);
+  
+  // New state for trailer modal
+  const [isTrailerModalOpen, setIsTrailerModalOpen] = useState(false);
+  const [selectedTrailer, setSelectedTrailer] = useState(null);
+  
+  // New state for watch now modal
+  const [isWatchNowModalOpen, setIsWatchNowModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchMovieDetails = async (signal) => {
@@ -78,6 +87,57 @@ const MovieDetailsPage = () => {
       return () => controller.abort();
     }
   }, [id]);
+
+  // Function to get the best trailer
+  const getBestTrailer = (videos) => {
+    if (!videos || !videos.results || videos.results.length === 0) {
+      return null;
+    }
+
+    // Priority order: Official Trailer > Trailer > Teaser > Clip
+    const trailerTypes = ['Trailer', 'Teaser', 'Clip'];
+    const sites = ['YouTube', 'Vimeo'];
+
+    for (const type of trailerTypes) {
+      for (const site of sites) {
+        const trailer = videos.results.find(
+          (video) => 
+            video.type === type && 
+            video.site === site &&
+            video.official === true
+        );
+        if (trailer) return trailer;
+      }
+    }
+
+    // If no official trailer found, look for any trailer
+    for (const type of trailerTypes) {
+      for (const site of sites) {
+        const trailer = videos.results.find(
+          (video) => video.type === type && video.site === site
+        );
+        if (trailer) return trailer;
+      }
+    }
+
+    return null;
+  };
+
+  // Handle trailer button click
+  const handleWatchTrailer = () => {
+    const trailer = getBestTrailer(movie.videos);
+    if (trailer) {
+      setSelectedTrailer(trailer);
+      setIsTrailerModalOpen(true);
+    } else {
+      toast.error("No trailer available for this movie");
+    }
+  };
+
+  // Handle watch now button click
+  const handleWatchNow = () => {
+    setIsWatchNowModalOpen(true);
+  };
 
   const scrollCast = (direction) => {
     const container = document.getElementById("cast-container");
@@ -129,6 +189,9 @@ const MovieDetailsPage = () => {
       </div>
     );
   }
+
+  // Check if trailer is available
+  const hasTrailer = getBestTrailer(movie.videos) !== null;
 
   return (
     <div className="min-h-screen bg-transparent text-white">
@@ -213,14 +276,27 @@ const MovieDetailsPage = () => {
 
               {/* Action Buttons */}
               <div className="flex flex-wrap gap-3 mb-6">
-                <button className="bg-gradient-to-r from-[#D6C7FF] to-[#AB8BFF] text-white hover:from-[#AB8BFF] hover:to-[#8B5FFF] cursor-pointer transform hover:scale-105 transition-all duration-300 px-6 py-3 rounded-lg font-semibold flex items-center gap-2">
+                <button 
+                  onClick={handleWatchNow}
+                  className="bg-gradient-to-r from-[#D6C7FF] to-[#AB8BFF] text-white hover:from-[#AB8BFF] hover:to-[#8B5FFF] cursor-pointer transform hover:scale-105 transition-all duration-300 px-6 py-3 rounded-lg font-semibold flex items-center gap-2"
+                >
                   <Play className="w-5 h-5" />
                   Watch Now
                 </button>
 
-                <button className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-semibold hover:scale-105 transition-all cursor-pointer flex items-center gap-2 shadow-lg">
+                <button 
+                  onClick={handleWatchTrailer}
+                  disabled={!hasTrailer}
+                  className={`${
+                    hasTrailer
+                      ? "bg-red-600 hover:bg-red-700 cursor-pointer"
+                      : "bg-gray-600 cursor-not-allowed"
+                  } text-white px-6 py-3 rounded-lg font-semibold hover:scale-105 transition-all flex items-center gap-2 shadow-lg ${
+                    hasTrailer ? "" : "opacity-50"
+                  }`}
+                >
                   <Film className="w-5 h-5" />
-                  Watch Trailer
+                  {hasTrailer ? "Watch Trailer" : "No Trailer"}
                 </button>
 
                 <button className="bg-amber-600 hover:bg-amber-700 cursor-pointer text-white px-4 py-3 rounded-lg font-semibold hover:scale-105 transition-all flex items-center gap-2">
@@ -299,7 +375,7 @@ const MovieDetailsPage = () => {
         <div className="container mx-auto px-4 py-8">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold">Cast</h2>
-            <div className="flex gap-2">
+            <div className="flex items-center justify-center gap-2">
               <button
                 onClick={() => scrollCast("left")}
                 className="bg-gray-800 hover:bg-gray-700 text-white p-2 rounded-full transition-colors"
@@ -319,8 +395,12 @@ const MovieDetailsPage = () => {
           <div className="relative">
             <div
               id="cast-container"
-              className="flex gap-4 overflow-x-hidden scroll-smooth"
-              style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+              className="flex gap-4 overflow-x-auto sm:overflow-x-hidden scroll-smooth pb-2 sm:pb-0"
+              style={{ 
+                scrollbarWidth: "thin", 
+                scrollbarColor: "rgba(156, 163, 175, 0.5) transparent",
+                msOverflowStyle: "none" 
+              }}
             >
               {movie.credits.cast.slice(0, 15).map((actor) => (
                 <div
@@ -349,9 +429,9 @@ const MovieDetailsPage = () => {
               ))}
             </div>
 
-            {/* Gradient Overlays */}
-            <div className="absolute left-0 top-0 w-8 h-full bg-gradient-to-r from-gray-900 to-transparent pointer-events-none"></div>
-            <div className="absolute right-0 top-0 w-8 h-full bg-gradient-to-l from-gray-900 to-transparent pointer-events-none"></div>
+            {/* Gradient Overlays - Only visible on desktop */}
+            <div className="hidden sm:block absolute left-0 top-0 w-8 h-full bg-gradient-to-r from-gray-900 to-transparent pointer-events-none"></div>
+            <div className="hidden sm:block absolute right-0 top-0 w-8 h-full bg-gradient-to-l from-gray-900 to-transparent pointer-events-none"></div>
           </div>
         </div>
       )}
@@ -361,7 +441,7 @@ const MovieDetailsPage = () => {
         <div className="container mx-auto px-4 py-8">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold">More Like This</h2>
-            <div className="flex gap-2">
+            <div className="flex items-center justify-center gap-2">
               <button
                 onClick={() => scrollSimilar("left")}
                 className="bg-gray-800 hover:bg-gray-700 text-white p-2 rounded-full transition-colors"
@@ -381,8 +461,12 @@ const MovieDetailsPage = () => {
           <div className="relative">
             <div
               id="similar-container"
-              className="flex gap-4 overflow-x-hidden scroll-smooth"
-              style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+              className="flex gap-4 overflow-x-auto sm:overflow-x-hidden scroll-smooth pb-2 sm:pb-0"
+              style={{ 
+                scrollbarWidth: "thin", 
+                scrollbarColor: "rgba(156, 163, 175, 0.5) transparent",
+                msOverflowStyle: "none" 
+              }}
             >
               {movie.similar.results.slice(0, 20).map((similarMovie) => (
                 <div key={similarMovie.id} className="flex-shrink-0 w-48">
@@ -391,12 +475,27 @@ const MovieDetailsPage = () => {
               ))}
             </div>
 
-            {/* Gradient Overlays */}
-            <div className="absolute left-0 top-0 w-8 h-full bg-gradient-to-r from-gray-900 to-transparent pointer-events-none"></div>
-            <div className="absolute right-0 top-0 w-8 h-full bg-gradient-to-l from-gray-900 to-transparent pointer-events-none"></div>
+            {/* Gradient Overlays - Only visible on desktop */}
+            <div className="hidden sm:block absolute left-0 top-0 w-8 h-full bg-gradient-to-r from-gray-900 to-transparent pointer-events-none"></div>
+            <div className="hidden sm:block absolute right-0 top-0 w-8 h-full bg-gradient-to-l from-gray-900 to-transparent pointer-events-none"></div>
           </div>
         </div>
       )}
+
+      {/* Trailer Modal */}
+      <TrailerModal
+        isOpen={isTrailerModalOpen}
+        onClose={() => setIsTrailerModalOpen(false)}
+        trailer={selectedTrailer}
+        movieTitle={movie.title}
+      />
+
+      {/* Watch Now Modal */}
+      <WatchNowModal
+        isOpen={isWatchNowModalOpen}
+        onClose={() => setIsWatchNowModalOpen(false)}
+        movie={movie}
+      />
     </div>
   );
 };
