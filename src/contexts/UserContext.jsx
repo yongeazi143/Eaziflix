@@ -58,7 +58,6 @@ export const UserProvider = (props) => {
         const timer = setTimeout(async () => {
           try {
             await logout();
-            console.log("Session expired - user was logged out");
           } catch (error) {
             console.error("Error during automatic logout:", error);
           }
@@ -113,8 +112,6 @@ const loginWithGoogle = async (rememberMe = false) => {
     const origin = window.location.origin;
     const successUrl = `${origin}/oauth-success`;
     const failureUrl = `${origin}/oauth-failure`;
-    
-    console.log('Starting Google OAuth with URLs:', { successUrl, failureUrl });
     
     // Create OAuth2 session with Google
     account.createOAuth2Session(
@@ -202,7 +199,6 @@ const loginWithGoogle = async (rememberMe = false) => {
         const timer = setTimeout(async () => {
           try {
             await logout();
-            console.log("Session expired - user was logged out");
           } catch (error) {
             console.error("Error during automatic logout:", error);
           }
@@ -625,7 +621,6 @@ const loginWithGoogle = async (rememberMe = false) => {
               const timer = setTimeout(async () => {
                 try {
                   await logout();
-                  console.log("Session expired - user was logged out");
                 } catch (error) {
                   console.error("Error during automatic logout:", error);
                 }
@@ -704,12 +699,10 @@ const loginWithGoogle = async (rememberMe = false) => {
         shouldMaintainSession,   
         requestPasswordReset,
         resetPassword,
-        // social login functions
         loginWithGoogle,
         loginWithGitHub,
         handleOAuthSuccess,
         handleOAuthFailure,
-        // checkOAuthSession,
         socialLoginLoading,
       }}
     >
