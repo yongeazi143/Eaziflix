@@ -186,7 +186,7 @@ const { login, loginWithGoogle, loginWithGitHub, socialLoginLoading } = useUser(
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded bg-gradient-to-r from-[#D6C7FF] to-[#AB8BFF] py-3 font-bold  text-white px-4 hover:cursor-pointer hover:shadow-2xl hover:from-[#AB8BFF] hover:to-[#8B5FFF] transition-all duration-300"
+              className="w-full rounded bg-gradient py-3 font-bold  text-white px-4 hover:cursor-pointer hover:shadow-2xl"
             >
               {loading ? (
                 <div className="flex items-center justify-center gap-2">

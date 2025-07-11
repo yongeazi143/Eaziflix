@@ -143,11 +143,11 @@
 }
 
 @utility text-gradient {
-  @apply bg-linear-to-r from-[#D6C7FF] to-[#AB8BFF] bg-clip-text text-transparent;
+  @apply bg-gradient-to-r from-[#E879F9] to-[#A855F7] bg-clip-text text-transparent;
 }
 
 @utility bg-gradient {
-  @apply bg-blue-900 bg-linear-to-r from-[#D6C7FF] to-[#AB8BFF] bg-clip-text;
+  @apply text-white bg-gradient-to-r from-[#E879F9] to-[#A855F7] hover:from-[#EC4899] hover:to-[#9333EA] transition-all duration-300;
 }
 
 @utility fancy-text {

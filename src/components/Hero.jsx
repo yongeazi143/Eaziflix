@@ -271,7 +271,7 @@ const Hero = ({ onWatchNow, onAddToWatchlist }) => {
               <div className="flex flex-wrap gap-4">
                 <button
                   onClick={() => onWatchNow && onWatchNow(currentMovie)}
-                  className="flex items-center gap-3 bg-gradient-to-r from-[#D6C7FF] to-[#AB8BFF] hover:from-[#AB8BFF] hover:to-[#8B5FFF]  transition-all duration-300 text-white px-8 py-4 rounded-lg font-semibold text-lg transform hover:scale-105 shadow-xl cursor-pointer"
+                  className="flex items-center gap-3 bg-gradient px-8 py-4 rounded-lg font-semibold text-lg transform hover:scale-105 shadow-xl cursor-pointer"
                 >
                   <Play className="w-6 h-6 fill-white" />
                   Watch Now

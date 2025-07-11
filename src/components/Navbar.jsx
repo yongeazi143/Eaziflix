@@ -105,17 +105,18 @@ const Navbar = ({
       <div
         className={`fixed top-0 left-0 right-0 w-full z-50 transition-all duration-300 ${
           isScrolled
-            ? "backdrop-blur-lg shadow-lg backdrop-brightness-75 border-b border-purple-300"
+            ? "backdrop-blur-lg shadow-lg backdrop-brightness-75"
             : "bg-transparent"
         }`}
       >
         <nav className="flex items-center justify-between py-4 px-6 max-w-7xl mx-auto">
           {/* Logo */}
-          <div className="flex items-center space-x-8">
-            <h2
-              className="text-2xl font-bold cursor-pointer hover:scale-105 transition-transform duration-200"
-              onClick={() => navigate("/")}
-            >
+          <div
+            className="flex items-center justify-center gap-1 cursor-pointer hover:scale-105 transition-transform duration-200"
+            onClick={() => navigate("/")}
+          >
+            <img src="./logo.png" alt="Logo" className="w-8 h-8" />
+            <h2 className="text-2xl font-bold">
               Eazi<span className="text-gradient">Flix</span>
             </h2>
           </div>
@@ -246,7 +247,7 @@ const Navbar = ({
             {isLandingPage && !user && (
               <Link
                 to="/login"
-                className="bg-gradient-to-r from-[#D6C7FF] to-[#AB8BFF] text-white font-normal px-6 py-2 rounded-lg hover:cursor-pointer hover:shadow-2xl hover:from-[#AB8BFF] hover:to-[#8B5FFF] transform hover:scale-105 transition-all duration-300"
+                className="bg-gradient font-medium text-white px-6 py-3 rounded-xl text-center shadow-sm hover:shadow-purple-500/25 transform hover:scale-105"
               >
                 Login
               </Link>
@@ -261,12 +262,16 @@ const Navbar = ({
                 <div className="relative w-6 h-6">
                   <Menu
                     className={`absolute w-6 h-6 transition-all duration-300 ${
-                      isMenuOpen ? "rotate-180 opacity-0" : "rotate-0 opacity-100"
+                      isMenuOpen
+                        ? "rotate-180 opacity-0"
+                        : "rotate-0 opacity-100"
                     }`}
                   />
                   <X
                     className={`absolute w-6 h-6 transition-all duration-300 ${
-                      isMenuOpen ? "rotate-0 opacity-100" : "rotate-180 opacity-0"
+                      isMenuOpen
+                        ? "rotate-0 opacity-100"
+                        : "rotate-180 opacity-0"
                     }`}
                   />
                 </div>
@@ -396,7 +401,7 @@ const Navbar = ({
           )}
 
           {/* Mobile Login Button with staggered animation */}
-          {isLandingPage && !user && (
+          {(isLandingPage && !user ) && (
             <div
               className={`pt-4 border-t border-gray-700/50 transition-all duration-300 delay-400 ${
                 isMenuOpen
@@ -406,7 +411,7 @@ const Navbar = ({
             >
               <Link
                 to="/login"
-                className="block bg-gradient-to-r from-[#D6C7FF] to-[#AB8BFF] hover:from-[#AB8BFF] hover:to-[#8B5FFF] transition-all duration-300 text-white font-medium px-6 py-3 rounded-xl text-center  shadow-sm hover:shadow-purple-500/25 transform hover:scale-105"
+                className="block bg-gradient text-white font-medium px-6 py-3 rounded-xl text-center  shadow-sm hover:shadow-purple-500/25 transform hover:scale-105"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Login
