@@ -7,22 +7,44 @@
   "display": "standalone",
   "scope": "/",
   "start_url": "/",
+  "screenshots": [
+    {
+      "src": "screenshot-wide.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Eaziflix desktop view"
+    },
+    {
+      "src": "screenshot-narrow.png",
+      "sizes": "428x926",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Eaziflix mobile view"
+    }
+  ],
   "icons": [
     {
-      "src": "logo.png",
+      "src": "pwa-64x64.png",
+      "sizes": "64x64",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "pwa-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "logo.png",
+      "src": "pwa-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "logo.png",
-      "sizes": "192x192",
+      "src": "maskable-icon-512x512.png",
+      "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
     }
