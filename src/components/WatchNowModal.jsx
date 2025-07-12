@@ -50,7 +50,7 @@ const getTopRatedMoviesConfig = () => ({
 });
 
 const WatchNowModal = ({ isOpen, onClose, movie }) => {
-  const [currentProvider, setCurrentProvider] = useState("vidsrc-me");
+  const [currentProvider, setCurrentProvider] = useState("vidsrc-to");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -71,14 +71,14 @@ const WatchNowModal = ({ isOpen, onClose, movie }) => {
 const sources = {
     "vidsrc-to": {
       name: "Source 1",
-      url: `${PROXY_BASE_URL}/proxy/vidsrc-to?id=${movie?.id}&type=movie`,
+      url: `${PROXY_BASE_URL}/proxy/vidsrc-me?id=${movie?.id}&tmdb=${movie?.id}&type=movie`,
       quality: "1080p",
       icon: <Shield className="w-4 h-4" />,
       description: "High quality, ad-free",
     },
     "vidsrc-me": {
       name: "Source 2",
-      url: `${PROXY_BASE_URL}/proxy/vidsrc-me?id=${movie?.id}&tmdb=${movie?.id}&type=movie`,
+      url: `${PROXY_BASE_URL}/proxy/vidsrc-to?id=${movie?.id}&type=movie`,
       quality: "720p",
       icon: <Tv className="w-4 h-4" />,
       description: "Alternative source",
@@ -414,7 +414,7 @@ const sources = {
                               : "bg-red-500"
                           }`}
                         ></div>
-                        <span>Proxy Server</span>
+                        <span>Eazi Proxy</span>
                       </div>
                     </div>
                   </div>
