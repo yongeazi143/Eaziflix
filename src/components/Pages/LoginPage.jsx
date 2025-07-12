@@ -183,6 +183,18 @@ const { login, loginWithGoogle, loginWithGitHub, socialLoginLoading } = useUser(
               )}
             </div>
 
+            
+
+          <label className="flex items-center mt-2">
+            <input
+              type="checkbox"
+              checked={rememberMe}
+              onChange={(e) => setRememberMe(e.target.checked)}
+              className="form-checkbox h-4 w-4 rounded border-gray-600 bg-gray-700 text-red-600 focus:ring-red-500"
+            />
+            <span className="mx-2 text-white">Remember me </span>
+          </label>
+
             <button
               type="submit"
               disabled={loading}
@@ -197,6 +209,12 @@ const { login, loginWithGoogle, loginWithGitHub, socialLoginLoading } = useUser(
                 "Sign In"
               )}
             </button>
+            
+            <div className="text-center">
+              <Link to="/forget-password" className="text-sm text-gray-400 hover:underline">
+                Forgot password?
+              </Link>
+            </div>
 
             <div className="text-center text-gray-400 mt-4">OR</div>
 
@@ -234,22 +252,7 @@ const { login, loginWithGoogle, loginWithGitHub, socialLoginLoading } = useUser(
               </button>
             </div>
 
-            <div className="text-center">
-              <Link to="/forget-password" className="text-sm text-gray-400 hover:underline">
-                Forgot password?
-              </Link>
-            </div>
           </form>
-
-          <label className="flex items-center mt-2">
-            <input
-              type="checkbox"
-              checked={rememberMe}
-              onChange={(e) => setRememberMe(e.target.checked)}
-              className="form-checkbox h-4 w-4 rounded border-gray-600 bg-gray-700 text-red-600 focus:ring-red-500"
-            />
-            <span className="ml-2 text-white">Remember me</span>
-          </label>
 
           <div className="text-gray-400 mt-4">
             New to Eazi<span className="text-gradient">Flix?</span>
