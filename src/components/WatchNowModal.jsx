@@ -21,7 +21,7 @@ import useToast from "../hooks/useToast";
 
 const TMDB_API_URL = "https://api.themoviedb.org/3/";
 const TMDB_API_KEY = import.meta.env.VITE_TMDB_API_KEY;
-const PROXY_BASE_URL = "https://video-proxy-server-q7lw.onrender.com";
+const PROXY_BASE_URL = "http//localhost:3001";
 
 const getPopularMoviesConfig = () => ({
   method: "GET",

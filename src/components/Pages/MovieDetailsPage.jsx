@@ -16,6 +16,7 @@ import MovieCard from "../MovieCard";
 import TrailerModal from "../TrailerModal"; 
 import WatchNowModal from "../WatchNowModal";
 
+const ass = true;
 const TMDB_API_URL = "https://api.themoviedb.org/3/";
 const TMDB_API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 
@@ -63,6 +64,7 @@ const MovieDetailsPage = () => {
 
         const movieData = response.data;
         setMovie(movieData);
+        
       } catch (err) {
         if (err.name === "AbortError") return;
 
