@@ -16,7 +16,7 @@ import MovieCard from "../MovieCard";
 import TrailerModal from "../TrailerModal"; 
 import WatchNowModal from "../WatchNowModal";
 
-const ass = true;
+
 const TMDB_API_URL = "https://api.themoviedb.org/3/";
 const TMDB_API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 
@@ -25,7 +25,7 @@ const getMovieDetailsConfig = (movieId) => ({
   url: `${TMDB_API_URL}movie/${movieId}`,
   params: {
     language: "en-US",
-    append_to_response: "credits,similar,watch/providers,videos", // Added videos
+    append_to_response: "credits,similar,watch/providers,videos", 
   },
   headers: {
     accept: "application/json",
