@@ -62,7 +62,7 @@ const WatchNowModal = ({ isOpen, onClose, movie }) => {
   const [topRatedScrollPosition, setTopRatedScrollPosition] = useState(0);
   const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
   const [proxyServerStatus, setProxyServerStatus] = useState("unknown");
-  const [iframeKey, setIframeKey] = useState(0); // For forcing iframe reload
+  const [iframeKey, setIframeKey] = useState(0); 
 
   const {toast} = useToast();
   
@@ -158,7 +158,7 @@ const sources = {
     if (isOpen) {
       setError(null);
       setIsLoading(true);
-      setIframeKey((prev) => prev + 1); // Force iframe reload
+      setIframeKey((prev) => prev + 1); 
 
       // Simulate loading time
       const timer = setTimeout(() => {
@@ -405,16 +405,6 @@ const sources = {
                       <div className="flex items-center gap-1">
                         <Shield className="w-4 h-4 text-[#E879F9]" />
                         <span>Ad-Free</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <div
-                          className={`w-2 h-2 rounded-full ${
-                            proxyServerStatus === "online"
-                              ? "bg-green-500"
-                              : "bg-red-500"
-                          }`}
-                        ></div>
-                        <span>Eazi Proxy</span>
                       </div>
                     </div>
                   </div>
